@@ -1,48 +1,57 @@
-import { useState, useContext, useEffect } from 'react';
-import { Form, Input, Button, Select, message } from 'antd';
-import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState, useContext, useEffect } from "react";
+import { Form, Input, Button, Select, message } from "antd";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const { Option } = Select;
 
 const Login = () => {
   const authContext = useContext(AuthContext);
-  
+
   if (!authContext) {
-    throw new Error('AuthContext is not defined');
+    throw new Error("AuthContext is not defined");
   }
 
-  const [role, setRole] = useState<string>('partner');
+  const [role, setRole] = useState<string>("partner");
+  const setPartner = useContext(AppContext)?.setPartner;
+  const partner = useContext(AppContext)?.partner;
   const { login } = authContext;
   const navigate = useNavigate();
 
   const handleSubmit = async (values: any) => {
     try {
       const endpoint =
-        role === 'partner'
-          ? `${import.meta.env.VITE_API_URL}/auth/login-partner`
-          : `${import.meta.env.VITE_API_URL}/auth/login-manager`;
+        role === "partner"
+          ? `${import.meta.env.VITE_API_URL}/api/auth/login-partner`
+          : `${import.meta.env.VITE_API_URL}/api/auth/login-manager`;
 
       const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || 'Login failed');
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
       login(data.token);
-      message.success('Login successful');
-      navigate('/');
+      console.log(`set partner: ${setPartner}, partner: ${data}`)
+      if (setPartner){
+        setPartner(data.partner);
+        localStorage.setItem('partner',data.partner);
+      }
+      message.success("Login successful");
+      if(role == "partner" || true)
+      navigate("/partnerDashboard");
     } catch (error) {
-      console.error('Failed to login:', error);
-      message.error('Login failed');
+      console.error("Failed to login:", error);
+      message.error("Login failed");
     }
   };
   useEffect(() => {
-    if (localStorage.getItem("token")){
+    if (localStorage.getItem("token") && partner) {
       navigate("/");
     }
   }, []);
@@ -60,7 +69,7 @@ const Login = () => {
           name="role"
           label="Login As"
           initialValue="partner"
-          rules={[{ required: true, message: 'Please select a role' }]}
+          rules={[{ required: true, message: "Please select a role" }]}
         >
           <Select onChange={setRole}>
             <Option value="partner">Partner</Option>
@@ -72,7 +81,7 @@ const Login = () => {
         <Form.Item
           name="email"
           label="Email"
-          rules={[{ required: true, message: 'Please enter your email' }]}
+          rules={[{ required: true, message: "Please enter your email" }]}
         >
           <Input />
         </Form.Item>
@@ -81,7 +90,7 @@ const Login = () => {
         <Form.Item
           name="password"
           label="Password"
-          rules={[{ required: true, message: 'Please enter your password' }]}
+          rules={[{ required: true, message: "Please enter your password" }]}
         >
           <Input.Password />
         </Form.Item>

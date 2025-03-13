@@ -1,7 +1,6 @@
 import { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { LoadingContext } from '../context/LoadingContext';
-//import { ToastContext } from '../context/ToastContext';
 
 const Orders = () => {
   const context = useContext(AppContext);
@@ -11,8 +10,6 @@ const Orders = () => {
 
   const { orders, fetchOrders } = context;
 
-  // State for form inputs
-  const [orderNumber, setOrderNumber] = useState('');
   const [area, setArea] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -24,35 +21,33 @@ const Orders = () => {
     try {
       loadingContext?.showLoading();
 
-      const newOrder = {
-        orderNumber,
-        customer: {
-          name: customerName,
-          phone: customerPhone,
-          address: customerAddress,
-        },
-        area,
-        items: [{ name: 'Pizza', quantity: 1, price: 10 }], // Example item
-        status: 'pending',
-        totalAmount: 10,
-      };
-
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+      console.log("before fetch");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newOrder),
+        body: JSON.stringify({
+          customer: {
+            name: "John Doe",
+            phone: "1234567890",
+            address: "123 Street",
+          },
+          area: area,
+          items: [{ name: "Pizza", quantity: 1, price: 10 }],
+          status: "pending",
+          scheduledFor: "2025-03-20T10:00:00Z",
+          assignedTo: "67d1c9bf9a9c2dff8016da5f",
+          totalAmount: 10,
+        }),
       });
 
+      console.log("after fetch");
       if (!res.ok) throw new Error('Failed to create order');
 
-      // ✅ Optimistic update — update state before fetching
       fetchOrders(); 
 
 
-      // Reset form
-      setOrderNumber('');
       setArea('');
       setCustomerName('');
       setCustomerPhone('');
@@ -68,16 +63,7 @@ const Orders = () => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Orders</h1>
 
-      {/* ✅ Create Order Form */}
       <form onSubmit={handleSubmit} className="space-y-4 mb-8 max-w-lg">
-        <input
-          type="text"
-          placeholder="Order Number"
-          value={orderNumber}
-          onChange={(e) => setOrderNumber(e.target.value)}
-          className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
         <input
           type="text"
           placeholder="Area"
@@ -118,7 +104,6 @@ const Orders = () => {
         </button>
       </form>
 
-      {/* ✅ Refresh Orders Button */}
       <button
         className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
         onClick={() => {
@@ -129,11 +114,10 @@ const Orders = () => {
         Refresh Orders
       </button>
 
-      {/* ✅ Display Orders */}
       <ul>
         {orders.map((order) => (
           <li key={order._id} className="border-b py-2">
-            {order.orderNumber} - {order.status}
+            {order._id} - {order.status}
           </li>
         ))}
       </ul>

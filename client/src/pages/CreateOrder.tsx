@@ -14,20 +14,25 @@ const CreateOrder = () => {
     try {
       loadingContext?.showLoading();
 
-      await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          orderNumber,
-          customer: { name: 'John Doe', phone: '1234567890', address: '123 Street' },
-          area,
-          items: [{ name: 'Pizza', quantity: 1, price: 10 }],
-          status: 'pending',
+          customer: {
+            name: "John Doe",
+            phone: "1234567890",
+            address: "123 Street",
+          },
+          area: area,
+          items: [{ name: "Pizza", quantity: 1, price: 10 }],
+          status: "pending",
+          scheduledFor: "2025-03-20T10:00:00Z",
+          assignedTo: "67d1c9bf9a9c2dff8016da5f",
           totalAmount: 10,
         }),
       });
 
-      fetchOrders(); // Refresh order list
+      fetchOrders();
     } catch (error) {
       console.error('Failed to create order:', error);
     } finally {
@@ -37,13 +42,6 @@ const CreateOrder = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        placeholder="Order Number"
-        value={orderNumber}
-        onChange={(e) => setOrderNumber(e.target.value)}
-        className="border p-2 w-full"
-      />
       <input
         type="text"
         placeholder="Area"

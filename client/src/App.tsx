@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import Partners from "./pages/Partners";
 import Orders from "./pages/Orders";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -9,6 +8,9 @@ import { LoadingProvider } from "./context/LoadingContext";
 import Loading from "./components/Loading";
 import { AuthProvider } from "./context/AuthContext";
 import  PartnerDashboard  from "./pages/Partner/PartnerDashboard";
+import Partners from "./pages/Partners";
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -17,12 +19,24 @@ const App = () => {
         <AppProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/partnerDashboard" element={<PartnerDashboard />} />
-              <Route path="/partners" element={<Partners />} />
-              <Route path="/orders" element={<Orders />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/" element={
+                  <ProtectedRoute>
+                    <Layout />
+                  </ProtectedRoute>
+              } >
+                <Route path="partners" element={<Partners />} />
+                <Route path="/orders" element={<Orders />} />
+              </Route>
+              <Route
+                path="/partnerDashboard"
+                element={
+                  <ProtectedRoute>
+                    <PartnerDashboard/>
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </BrowserRouter>
           <Loading />

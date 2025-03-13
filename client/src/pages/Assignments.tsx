@@ -8,7 +8,7 @@ const Assignments = () => {
   const { assignments, assignmentMetrics, fetchAssignments } = context;
 
   useEffect(() => {
-    fetchAssignments();
+    // fetchAssignments();
   }, []);
 
   return (

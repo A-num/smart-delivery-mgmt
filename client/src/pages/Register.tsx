@@ -12,8 +12,8 @@ const Register = () => {
     try {
       const endpoint =
         role === 'partner'
-          ? `${import.meta.env.VITE_API_URL}/auth/register-partner`
-          : `${import.meta.env.VITE_API_URL}/auth/register-manager`;
+          ? `${import.meta.env.VITE_API_URL}/api/auth/register-partner`
+          : `${import.meta.env.VITE_API_URL}/api/auth/register-manager`;
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -24,6 +24,7 @@ const Register = () => {
       if (!res.ok) throw new Error('Failed to register');
 
       message.success('Registration successful!');
+      navigate('/login');
     } catch (error) {
       message.error('Failed to register');
     }

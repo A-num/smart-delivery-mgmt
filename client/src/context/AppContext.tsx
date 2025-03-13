@@ -3,18 +3,33 @@ import { DeliveryPartner, Order, Assignment, AssignmentMetrics } from '../types'
 import { LoadingContext } from './LoadingContext';
 
 type AppContextType = {
+  partner: DeliveryPartner | undefined;
+  setPartner: (partner: DeliveryPartner | undefined) => void | undefined;
   partners: DeliveryPartner[];
   orders: Order[];
   assignments: Assignment[];
-  assignmentMetrics: AssignmentMetrics | null; // ✅ Allow null initially
+  assignmentMetrics: AssignmentMetrics | null;
   fetchPartners: () => void;
   fetchOrders: () => void;
-  fetchAssignments: () => void; // ✅ Added this
+  fetchAssignments: () => void;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
+  const [partner, setPartner] = useState<DeliveryPartner | undefined>(() => {
+    const storedPartner = localStorage.getItem('partner');
+    console.log(`stored partner: ${localStorage.getItem('partner')}`);
+    return storedPartner ? JSON.parse(storedPartner) : null;
+  });
+
+  useEffect(() => {
+    if (partner) {
+      localStorage.setItem('partner', JSON.stringify(partner));
+    } else {
+      localStorage.removeItem('partner');
+    }
+  }, [partner]);
   const [partners, setPartners] = useState<DeliveryPartner[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -25,7 +40,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const fetchPartners = async () => {
     try {
       loadingContext?.showLoading();
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/partners`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/partners`);
       if (!res.ok) throw new Error('Failed to fetch partners');
       const data = await res.json();
       setPartners(data);
@@ -39,7 +54,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const fetchOrders = async () => {
     try {
       loadingContext?.showLoading();
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
       if (!res.ok) throw new Error('Failed to fetch orders');
       const data = await res.json();
       setOrders(data);
@@ -53,11 +68,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const fetchAssignments = async () => {
     try {
       loadingContext?.showLoading();
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/assignments/metrics`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/assignment-metrics`);
       if (!res.ok) throw new Error('Failed to fetch assignments');
       const data = await res.json();
 
-      // ✅ Type Guard to handle incomplete data
       if (data && data.assignments && data.metrics) {
         setAssignments(data.assignments);
         setAssignmentMetrics(data.metrics);
@@ -70,17 +84,43 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token) return;
+    fetchPartnerData(token);
     fetchPartners();
     fetchOrders();
     fetchAssignments();
   }, []);
 
+  const fetchPartnerData = async (token: string) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/fetch-partner`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.status == 200) {
+        console.log(`Partner fetched in app context: ${data}`);
+        setPartner(data);
+        localStorage.setItem("partner", data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    }
+  };
+
   return (
     <AppContext.Provider value={{ 
+      partner,
       partners, 
       orders, 
       assignments, 
       assignmentMetrics,
+      setPartner,
       fetchPartners, 
       fetchOrders,
       fetchAssignments
