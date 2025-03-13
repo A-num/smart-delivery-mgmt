@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Table, Tag } from 'antd';
-import { AppContext } from '../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 
 const Partners = () => {
 

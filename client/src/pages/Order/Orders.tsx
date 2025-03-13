@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
-import { AppContext } from '../context/AppContext';
-import { LoadingContext } from '../context/LoadingContext';
+import { AppContext } from '../../context/AppContext';
+import { LoadingContext } from '../../context/LoadingContext';
 
 const Orders = () => {
   const context = useContext(AppContext);

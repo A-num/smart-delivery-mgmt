@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Orders from "./pages/Orders";
+import Dashboard from "./pages/Manager/Dashboard";
+import Orders from "./pages/Order/Orders";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { AppProvider } from "./context/AppContext";
@@ -8,7 +8,7 @@ import { LoadingProvider } from "./context/LoadingContext";
 import Loading from "./components/Loading";
 import { AuthProvider } from "./context/AuthContext";
 import  PartnerDashboard  from "./pages/Partner/PartnerDashboard";
-import Partners from "./pages/Partners";
+import Partners from "./pages/Manager/Partners";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 

@@ -55,16 +55,6 @@ export const updatePartnerProfile = async (req: Request, res: Response): Promise
   }
 };
 
-export const getAvailableAreas = async (_req: Request, res: Response): Promise<void> => {
-  try {
-    const areas = ['North', 'South', 'East', 'West', 'Central'];
-    res.status(200).json(areas);
-  } catch (error) {
-    console.error('Failed to fetch areas:', error);
-    res.status(500).json({ message: 'Failed to fetch areas' });
-  }
-};
-
 export const getPartnerDashboard = async (req: Request, res: Response): Promise<void> => {
   try {
     const partnerId = req.params.partnerId;

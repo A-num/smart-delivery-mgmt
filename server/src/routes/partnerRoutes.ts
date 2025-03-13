@@ -4,7 +4,6 @@ import {
   updateAvailabilityStatus,
   getPartnerProfile,
   updatePartnerProfile,
-  getAvailableAreas,
   getPartners,
   updatePartnerAreas,
 } from '../controllers/partnerController';
@@ -17,6 +16,5 @@ router.put('/:partnerId/status', updateAvailabilityStatus);
 router.get('/:partnerId/profile', getPartnerProfile);
 router.put('/:partnerId/profile', updatePartnerProfile);
 router.put('/:partnerId/areas', updatePartnerAreas);
-router.get('/areas', getAvailableAreas);
 
 export default router;

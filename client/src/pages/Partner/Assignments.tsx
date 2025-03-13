@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { AppContext } from '../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 
 const Assignments = () => {
   const context = useContext(AppContext);

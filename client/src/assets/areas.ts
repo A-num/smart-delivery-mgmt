@@ -1,1 +1,2 @@
+//This is just a constant for areas, can make this a db table to fetch from if needed. Doesnt seem necessary atm.
 export const AREAS = ["Bandra", "Khar", "Santa Cruz", "Vile Parle", "Andheri", "Goregaon", "Mahim", "Matunga", "Dadar", "Parel", "Lower Parel"];
