@@ -6,7 +6,6 @@ import Manager from '../models/managerModel';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
 
-// ✅ Register Partner
 export const registerPartner = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, phone, areas } = req.body;
@@ -36,7 +35,6 @@ export const registerPartner = async (req: Request, res: Response): Promise<void
   }
 };
 
-// ✅ Register Manager
 export const registerManager = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password } = req.body;
@@ -64,7 +62,6 @@ export const registerManager = async (req: Request, res: Response): Promise<void
   }
 };
 
-// ✅ Login Partner
 export const loginPartner = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -92,7 +89,6 @@ export const loginPartner = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// ✅ Login Manager
 export const loginManager = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -117,5 +113,29 @@ export const loginManager = async (req: Request, res: Response): Promise<void> =
   } catch (error) {
     console.error('Failed to login manager:', error);
     res.status(500).json({ message: 'Failed to login manager' });
+  }
+};
+
+export const fetchPartner = async (_req: Request, res: Response) => {
+  try {
+    const token = _req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const decoded = jwt.verify(token!, process.env.JWT_SECRET!) as any;
+    const partner = await Partner.findById(decoded.id);
+
+    if (!partner) {
+      res.status(404).json({ message: 'Partner not found' });
+    }
+
+    res.status(200).json({
+      _id: partner!._id,
+      name: partner!.name,
+      email: partner!.email,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get partner data' });
   }
 };

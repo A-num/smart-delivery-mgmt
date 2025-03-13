@@ -2,6 +2,15 @@ import { Request, Response } from 'express';
 import Partner from '../models/partnerModel';
 import Order from '../models/orderModel';
 
+export const getPartners = async (req: Request, res: Response) => {
+  try {
+    const partners = Partner.find();
+
+    res.status(201).json({ partners: partners});
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get partners' });
+  }
+};
 export const getPartnerProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const partnerId = req.params.partnerId;
@@ -21,15 +30,15 @@ export const getPartnerProfile = async (req: Request, res: Response): Promise<vo
 export const updatePartnerProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const partnerId = req.params.partnerId;
-    const { name, email, phone, areas, shift } = req.body;
+    const { name, password, email, phone, shift } = req.body;
 
     const partner = await Partner.findByIdAndUpdate(
       partnerId,
       {
         name,
+        password,
         email,
         phone,
-        areas,
         shift,
       },
       { new: true }
@@ -39,7 +48,7 @@ export const updatePartnerProfile = async (req: Request, res: Response): Promise
       res.status(404).json({ message: 'Partner not found' });
     }
 
-    res.status(200).json(partner);
+    res.status(200).json({partner:partner});
   } catch (error) {
     console.error('Failed to update profile:', error);
     res.status(500).json({ message: 'Failed to update profile' });
@@ -111,5 +120,27 @@ export const updateAvailabilityStatus = async (
   } catch (error) {
     console.error('Failed to update availability status:', error);
     res.status(500).json({ message: 'Failed to update availability status' });
+  }
+};
+
+export const updatePartnerAreas = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const partnerId = req.params.partnerId;
+    const { areas} = req.body;
+
+    const partner = await Partner.findByIdAndUpdate(
+      partnerId,
+      {areas},
+      { new: true }
+    );
+
+    if (!partner) {
+      res.status(404).json({ message: 'Partner not found' });
+    }
+
+    res.status(200).json({partner:partner});
+  } catch (error) {
+    console.error('Failed to update profile:', error);
+    res.status(500).json({ message: 'Failed to update profile' });
   }
 };
