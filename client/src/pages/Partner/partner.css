@@ -1,0 +1,36 @@
+
+.ant-tabs-card {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  .ant-tabs-tab {
+    padding: 12px;
+    font-weight: 500;
+    font-size: 16px;
+  }
+  
+  .ant-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+  }
+  
+  .ant-card-head {
+    background-color: #fafafa;
+    font-weight: 600;
+  }
+  
+  .ant-switch {
+    background-color: #d1d5db;
+  }
+  
+  .ant-switch-checked {
+    background-color: #1890ff;
+  }
+  
+  h1 {
+    display: block;
+    font-size: 70px;
+    text-align: center;
+  }
