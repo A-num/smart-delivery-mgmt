@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Manager/Dashboard";
 import Orders from "./pages/Order/Orders";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -10,7 +9,10 @@ import { AuthProvider } from "./context/AuthContext";
 import  PartnerDashboard  from "./pages/Partner/PartnerDashboard";
 import Partners from "./pages/Manager/Partners";
 import Layout from "./components/Layout";
-import ProtectedRoute from "./components/ProtectedRoute";
+import PartnerProtectedRoute from "./components/PartnerProtectedRoute";
+import ManagerProtectedRoute from "./components/ManagerProtectedRoute";
+import HeaderFooter from "./components/HeaderFooter";
+
 
 const App = () => {
   return (
@@ -18,26 +20,30 @@ const App = () => {
       <LoadingProvider>
         <AppProvider>
           <BrowserRouter>
+          <HeaderFooter>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/" element={
-                  <ProtectedRoute>
+
+             <Route path="/managerDashboard" element={
+                  <ManagerProtectedRoute>
                     <Layout />
-                  </ProtectedRoute>
+                  </ManagerProtectedRoute>
               } >
                 <Route path="partners" element={<Partners />} />
-                <Route path="/orders" element={<Orders />} />
+                <Route path="orders" element={<Orders />} />
               </Route>
-              <Route
+
+             <Route
                 path="/partnerDashboard"
                 element={
-                  <ProtectedRoute>
+                  <PartnerProtectedRoute>
                     <PartnerDashboard/>
-                  </ProtectedRoute>
+                  </PartnerProtectedRoute>
                 }
               />
             </Routes>
+            </HeaderFooter>
           </BrowserRouter>
           <Loading />
         </AppProvider>

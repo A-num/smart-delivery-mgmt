@@ -57,7 +57,6 @@ const Register = () => {
           </Select>
         </Form.Item>
 
-        {/* Common Fields */}
         <Form.Item
           name="name"
           label="Name"
@@ -77,7 +76,6 @@ const Register = () => {
           <Input />
         </Form.Item>
 
-        {/* Partner-Specific Fields */}
         {role === 'partner' && (
           <Form.Item
             name="phone"

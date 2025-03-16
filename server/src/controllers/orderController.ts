@@ -1,13 +1,15 @@
 import { Request, Response } from "express";
 import Order from "../models/orderModel";
-import { assignOrder } from "../services/assignmentService";
+import { assignOrders } from "../services/assignmentService";
+import { request } from "http";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
+    console.log("order body", req.body)
     const newOrder = new Order(req.body);
     await newOrder.save();
-
-    const result = await assignOrder(newOrder._id.toString());
+    console.log("order saved")
+    const result = await assignOrders();
 
     res.status(201).json({ order: newOrder, assignmentResult: result });
   } catch (error) {

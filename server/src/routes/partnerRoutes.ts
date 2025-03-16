@@ -6,6 +6,7 @@ import {
   updatePartnerProfile,
   getPartners,
   updatePartnerAreas,
+  updatePartnerShift
 } from '../controllers/partnerController';
 
 const router = express.Router();
@@ -16,5 +17,7 @@ router.put('/:partnerId/status', updateAvailabilityStatus);
 router.get('/:partnerId/profile', getPartnerProfile);
 router.put('/:partnerId/profile', updatePartnerProfile);
 router.put('/:partnerId/areas', updatePartnerAreas);
+router.put("/:partnerId/shift", updatePartnerShift);
+
 
 export default router;

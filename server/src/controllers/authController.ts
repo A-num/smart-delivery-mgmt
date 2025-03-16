@@ -131,7 +131,7 @@ export const fetchPartner = async (_req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      _id: partner!._id,
+      partner : partner!._id,
       name: partner!.name,
       email: partner!.email,
     });

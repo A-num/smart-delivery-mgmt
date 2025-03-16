@@ -15,6 +15,7 @@ const Login = () => {
 
   const [role, setRole] = useState<string>("partner");
   const setPartner = useContext(AppContext)?.setPartner;
+  const setManager = useContext(AppContext)?.setManager;
   const partner = useContext(AppContext)?.partner;
   const { login } = authContext;
   const navigate = useNavigate();
@@ -37,22 +38,33 @@ const Login = () => {
       if (!res.ok) throw new Error(data.message || "Login failed");
 
       login(data.token);
-      console.log(`set partner: ${setPartner}, partner: ${data}`)
-      if (setPartner){
+
+      if (role === "partner" && setPartner) {
         setPartner(data.partner);
-        localStorage.setItem('partner',data.partner);
+        localStorage.setItem("partner", JSON.stringify(data.partner));
+        navigate("/partnerDashboard");
+      } else if (role === "manager" && setManager) {
+        setManager(data.manager);
+        localStorage.setItem("manager", JSON.stringify(data.manager));
+        navigate("/managerDashboard");
       }
       message.success("Login successful");
-      if(role == "partner" || true)
-      navigate("/partnerDashboard");
     } catch (error) {
       console.error("Failed to login:", error);
       message.error("Login failed");
     }
   };
+
   useEffect(() => {
-    if (localStorage.getItem("token") && partner) {
-      navigate("/");
+    const storedPartner = localStorage.getItem("partner");
+    const storedManager = localStorage.getItem("manager");
+  
+    if (storedPartner && setPartner) {
+      setPartner(JSON.parse(storedPartner));
+      navigate("/partnerDashboard");
+    } else if (storedManager && setManager) {
+      setManager(JSON.parse(storedManager));
+      navigate("/managerDashboard");
     }
   }, []);
 

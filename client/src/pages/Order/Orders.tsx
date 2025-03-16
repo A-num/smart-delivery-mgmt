@@ -1,108 +1,189 @@
-import { useState, useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
-import { LoadingContext } from '../../context/LoadingContext';
+import { useState, useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+import { LoadingContext } from "../../context/LoadingContext";
+import { AREAS } from "../../assets/areas";
+import { Button, Form, Input, Select, TimePicker } from "antd";
+const { Option } = Select;
 
 const Orders = () => {
   const context = useContext(AppContext);
   const loadingContext = useContext(LoadingContext);
-
   if (!context) return null;
-
   const { orders, fetchOrders } = context;
 
-  const [area, setArea] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
+  const [itemQuantity, setItemQuantity] = useState<Number>(0);
+  const [itemPrice, setItemPrice] = useState<Number>(0);
+  const [totalAmount, setTotalAmount] = useState<Number>(0);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values: any) => {
     try {
+      /**
+       if items list in future form:
+       values.totalAmount = 0;
+       values.items.forEach((item) => values.totalAmount += item.quantity*item.price)
+       */
       loadingContext?.showLoading();
-
-      console.log("before fetch");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           customer: {
-            name: "John Doe",
-            phone: "1234567890",
-            address: "123 Street",
+            name: values.customerName,
+            phone: values.customerPhone,
+            address: values.customerAddress,
           },
-          area: area,
-          items: [{ name: "Pizza", quantity: 1, price: 10 }],
+          area: values.area,
+          items: [{ name: values.itemName, quantity: values.itemQuantity, price: values.itemPrice}],
           status: "pending",
-          scheduledFor: "2025-03-20T10:00:00Z",
-          assignedTo: "67d1c9bf9a9c2dff8016da5f",
-          totalAmount: 10,
+          scheduledFor: values.scheduledFor,
+          totalAmount: totalAmount,
         }),
       });
 
-      console.log("after fetch");
-      if (!res.ok) throw new Error('Failed to create order');
+      if (!res.ok) throw new Error("Failed to create order");
 
-      fetchOrders(); 
-
-
-      setArea('');
-      setCustomerName('');
-      setCustomerPhone('');
-      setCustomerAddress('');
+      fetchOrders();
     } catch (error) {
-      console.error('Failed to create order:', error);
+      console.error("Failed to create order:", error);
     } finally {
       loadingContext?.hideLoading();
     }
   };
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Orders</h1>
+  const handleCalculateTotal = (price: Number, quantity: Number) => {
+     if (price != 0 && quantity != 0 ) {
+      const amount = Number(quantity) * Number(price);
+      setTotalAmount(amount);
+    } else {
+      console.log("Calculating: set to zero");
+      setTotalAmount(0);
+    }
+  };
 
-      <form onSubmit={handleSubmit} className="space-y-4 mb-8 max-w-lg">
-        <input
-          type="text"
-          placeholder="Area"
-          value={area}
-          onChange={(e) => setArea(e.target.value)}
-          className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Customer Phone"
-          value={customerPhone}
-          onChange={(e) => setCustomerPhone(e.target.value)}
-          className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Customer Address"
-          value={customerAddress}
-          onChange={(e) => setCustomerAddress(e.target.value)}
-          className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+  return (
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <Form
+        onFinish={handleSubmit}
+        layout="horizontal"
+        className="bg-white p-8 rounded-lg shadow-md w-96"
+        style={{ width: "30%" }}
+      >
+        <Form.Item
+          name="customerName"
+          label="Customer Name"
+          rules={[{ required: true, message: "Customer name is required" }]}
         >
-          Create Order
-        </button>
-      </form>
+          <Input placeholder="Enter customer name" />
+        </Form.Item>
+        <Form.Item
+          name="customerPhone"
+          label="Customer Phone"
+          rules={[
+            { required: true, message: "Please enter customer phone number" },
+          ]}
+        >
+          <Input placeholder="Enter customer phone number" />
+        </Form.Item>
+        <Form.Item
+          name="customerAddress"
+          label="Customer Address"
+          rules={[{ required: true, message: "Please enter customer address" }]}
+        >
+          <Input placeholder="Enter customer address" />
+        </Form.Item>
+        <Form.Item
+          name="area"
+          label="Area"
+          rules={[{ required: true, message: "Please enter Area" }]}
+        >
+          <Select
+            style={{
+              padding: "2px",
+              minWidth: "200px",
+              maxWidth: "400px",
+              margin: "auto",
+            }}
+            placeholder="Select Area"
+            className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {AREAS.map((area) => (
+              <Option key={area} value={area}>
+                {area}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="itemName"
+          label="Item Name"
+          rules={[{ required: true, message: "Please enter item name" }]}
+        >
+          <Input placeholder="Item Name" />
+        </Form.Item>
+        <Form.Item
+          name="itemQuantity"
+          label="Item Quantity"
+          rules={[{ required: true, message: "Please enter item quantity" }]}
+        >
+          <Input
+            placeholder="Item Quantity"
+            value={Number(itemQuantity)}
+            onChange={(e) => {
+              setItemQuantity(Number(e.target.value));
+              handleCalculateTotal(itemPrice, Number(e.target.value));
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          name="itemPrice"
+          label="Item Price"
+          rules={[{ required: true, message: "Please enter item price" }]}
+        >
+          <Input
+            placeholder="Item Price"
+            value={Number(itemPrice)}
+            onChange={(e) => {
+              setItemPrice(Number(e.target.value));
+              handleCalculateTotal(Number(e.target.value), itemQuantity);
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          name="totalAmount"
+          label="Total amount"
+        >
+          <div>
+            <Input
+              placeholder="Total Amount"
+              value={Number(totalAmount)}
+              readOnly
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          name="scheduledFor"
+          label="Scheduled For"
+          rules={[{ required: true, message: "Please select a time" }]}
+        >
+          <TimePicker
+            format="HH:mm"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="w-full"
+            style={{ alignSelf: "center" }}
+          >
+            Create Order
+          </Button>
+        </Form.Item>
+      </Form>
 
       <button
         className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"

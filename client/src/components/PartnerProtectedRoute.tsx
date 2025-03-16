@@ -2,13 +2,14 @@ import { JSX, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const partner = useContext(AppContext)?.partner;
+const PartnerProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { partner } = useContext(AppContext) || {};
+
   if (!partner) {
     return <Navigate to="/login" />;
   }
 
-  return <>{children}</>;
+  return children;
 };
 
-export default ProtectedRoute;
+export default PartnerProtectedRoute;

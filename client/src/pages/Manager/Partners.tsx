@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Table, Tag } from 'antd';
 import { AppContext } from '../../context/AppContext';
 
@@ -6,6 +6,12 @@ const Partners = () => {
 
   const context = useContext(AppContext);
   const partners = context?.partners;
+  const fetchPartners = context?.fetchPartners;
+
+  useEffect(() => {
+    if(fetchPartners)
+      fetchPartners();
+  }, [])
 
   const columns = [
     {
@@ -24,6 +30,26 @@ const Partners = () => {
       key: 'phone',
     },
     {
+      title: 'Current Load',
+      dataIndex: 'currentLoad',
+      key: 'currentLoad'
+    },
+    {
+      title: 'Ratings',
+      dataIndex: ['metrics', 'rating'],
+      key: 'metrics_rating'
+    },
+    {
+      title: 'Completed Orders',
+      dataIndex: ['metrics', 'completedOrders'],
+      key: 'metrics_completedOrders'
+    },
+    {
+      title: 'Cancelled Orders',
+      dataIndex: ['metrics','cancelledOrders'],
+      key: 'metrics_cancelledOrders'
+    },
+    {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -37,13 +63,16 @@ const Partners = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Partners</h1>
       <Table 
         dataSource={partners}
         columns={columns}
         rowKey="_id"
         bordered
-        pagination={{ pageSize: 5 }}
+        pagination={{
+          pageSize: 4,
+          showSizeChanger: false, 
+          showLessItems: true,
+        }}
       />
     </div>
   );

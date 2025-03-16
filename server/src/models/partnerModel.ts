@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
 const partnerSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-  phone: String,
+  name: { type: String, required: true},
+  email: { type: String, unique: true, required:true },
+  password: { type: String, required: true},
+  phone: { type: String, required: true},
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
   currentLoad: { type: Number, default: 0 },
   areas: [String],

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import {
-  DashboardOutlined,
   TeamOutlined,
   ShoppingCartOutlined,
   FileTextOutlined
@@ -14,7 +13,7 @@ const Navbar = () => {
 
   const handleClick = (e: any) => {
     setCurrentTab(e.key);
-    navigate(`/${e.key}`);
+    navigate(`/managerDashboard/${e.key}`);
   };
 
   return (
@@ -30,9 +29,9 @@ const Navbar = () => {
         fontWeight: 500,
       }}
     >
-      <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
+      {/* <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
         Dashboard
-      </Menu.Item>
+      </Menu.Item> */}
       <Menu.Item key="partners" icon={<TeamOutlined />}>
         Partners
       </Menu.Item>

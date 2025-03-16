@@ -1,10 +1,12 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { DeliveryPartner, Order, Assignment, AssignmentMetrics } from '../types';
+import { DeliveryPartner, Order, Assignment, AssignmentMetrics, Manager } from '../types';
 import { LoadingContext } from './LoadingContext';
 
 type AppContextType = {
   partner: DeliveryPartner | undefined;
   setPartner: (partner: DeliveryPartner | undefined) => void | undefined;
+  manager: Manager | undefined;
+  setManager: (manager: Manager | undefined) => void | undefined;
   partners: DeliveryPartner[];
   orders: Order[];
   assignments: Assignment[];
@@ -19,17 +21,26 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [partner, setPartner] = useState<DeliveryPartner | undefined>(() => {
     const storedPartner = localStorage.getItem('partner');
-    console.log(`stored partner: ${localStorage.getItem('partner')}`);
     return storedPartner ? JSON.parse(storedPartner) : null;
+  });
+ 
+  const [manager, setManager] = useState <Manager | undefined>(() => {
+    const storedManager = localStorage.getItem('manager');
+    return storedManager ? JSON.parse(storedManager) : null;
   });
 
   useEffect(() => {
     if (partner) {
       localStorage.setItem('partner', JSON.stringify(partner));
-    } else {
-      localStorage.removeItem('partner');
     }
-  }, [partner]);
+    else if (manager){
+      localStorage.setItem('manager', JSON.stringify(manager));
+    }
+     else {
+      localStorage.removeItem('partner');
+      localStorage.removeItem('manager');
+    }
+  }, [partner, manager]);
   const [partners, setPartners] = useState<DeliveryPartner[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -86,41 +97,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if(!token) return;
-    fetchPartnerData(token);
     fetchPartners();
     fetchOrders();
     fetchAssignments();
-  }, []);
-
-  const fetchPartnerData = async (token: string) => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/fetch-partner`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
-      if (res.status == 200) {
-        console.log(`Partner fetched in app context: ${data}`);
-        setPartner(data);
-        localStorage.setItem("partner", data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch user data:', error);
-    }
-  };
+  }, []); 
 
   return (
     <AppContext.Provider value={{ 
       partner,
       partners, 
       orders, 
+      manager,
       assignments, 
       assignmentMetrics,
       setPartner,
+      setManager,
       fetchPartners, 
       fetchOrders,
       fetchAssignments
