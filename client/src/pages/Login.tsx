@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
 const { Option } = Select;
@@ -46,75 +46,82 @@ const Login = () => {
       } else if (role === "manager" && setManager) {
         setManager(data.manager);
         localStorage.setItem("manager", JSON.stringify(data.manager));
-        navigate("/managerDashboard");
+        navigate("/managerDashboard/dashboard");
       }
       message.success("Login successful");
     } catch (error) {
       console.error("Failed to login:", error);
       message.error("Login failed");
+      alert("Failed to login");
     }
   };
 
   useEffect(() => {
     const storedPartner = localStorage.getItem("partner");
     const storedManager = localStorage.getItem("manager");
-  
+
     if (storedPartner && setPartner) {
       setPartner(JSON.parse(storedPartner));
       navigate("/partnerDashboard");
     } else if (storedManager && setManager) {
       setManager(JSON.parse(storedManager));
-      navigate("/managerDashboard");
+      navigate("/managerDashboard/dashboard");
     }
   }, []);
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <Form
-        name="login"
-        onFinish={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg w-96"
-        layout="vertical"
-      >
-        {/* Role Selection */}
-        <Form.Item
-          name="role"
-          label="Login As"
-          initialValue="partner"
-          rules={[{ required: true, message: "Please select a role" }]}
+    <div className="flex justify-center items-center bg-gray-100 h-screen w-full">
+        <Form
+          name="login"
+          onFinish={handleSubmit}
+          className="bg-white p-8 rounded-lg shadow-lg w-96"
+          layout="vertical"
+          style={{ maxWidth: "20%" }}
         >
-          <Select onChange={setRole}>
-            <Option value="partner">Partner</Option>
-            <Option value="manager">Manager</Option>
-          </Select>
-        </Form.Item>
+          {/* Role Selection */}
+          <Form.Item
+            name="role"
+            label="Login As"
+            initialValue="partner"
+            rules={[{ required: true, message: "Please select a role" }]}
+          >
+            <Select onChange={setRole}>
+              <Option value="partner">Partner</Option>
+              <Option value="manager">Manager</Option>
+            </Select>
+          </Form.Item>
 
-        {/* Email Field */}
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[{ required: true, message: "Please enter your email" }]}
-        >
-          <Input />
-        </Form.Item>
+          {/* Email Field */}
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Please enter your email" }]}
+          >
+            <Input />
+          </Form.Item>
 
-        {/* Password Field */}
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ required: true, message: "Please enter your password" }]}
-        >
-          <Input.Password />
-        </Form.Item>
+          {/* Password Field */}
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: "Please enter your password" }]}
+          >
+            <Input.Password />
+          </Form.Item>
 
-        {/* Submit Button */}
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="w-full">
-            Login
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+          {/* Submit Button */}
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="w-full">
+              Login
+            </Button>
+          </Form.Item>
+        </Form>
+        <div className="register-link-container">
+          <p>
+            New User?<Link to="/register">Register here</Link>
+          </p>
+        </div>
+      </div>
   );
 };
 

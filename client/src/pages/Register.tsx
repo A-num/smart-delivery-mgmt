@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -108,6 +108,11 @@ const Register = () => {
           </Button>
         </Form.Item>
       </Form>
+      <div className="register-link-container">
+        <p>
+          Already Signed Up?<Link to="/login">Login here</Link>
+        </p>
+      </div>
     </div>
   );
 };

@@ -2,32 +2,27 @@ import { useContext, useEffect } from 'react';
 import { Table, Tag } from 'antd';
 import { AppContext } from '../../context/AppContext';
 
-const Dashboard = () => {
+const History = () => {
 
   const context = useContext(AppContext);
-  const orders = context?.orders;
-  const fetchOrders = context?.fetchOrders;
+  const assignments = context?.assignments;
+  const fetchAssignments = context?.fetchAssignments;
 
   useEffect(() => {
-    if(fetchOrders)
-      fetchOrders();
+    if(fetchAssignments)
+        fetchAssignments();
   }, [])
 
   const columns = [
     {
-      title: 'Order Number',
-      dataIndex: '_id',
-      key: 'id',
+      title: 'Order Id',
+      dataIndex: 'orderId',
+      key: 'order_id',
     },
     {
-      title: 'Scheduled For',
-      dataIndex: 'scheduledFor',
-      key: 'scheduled_for',
-    },
-    {
-      title: 'Assigned To',
-      dataIndex: 'assignedTo',
-      key: 'assigned_to'
+      title: 'Partner Id',
+      dataIndex: 'partnerId',
+      key: 'partner_id',
     },
 
     {
@@ -35,7 +30,7 @@ const Dashboard = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={status === 'assigned' || status === 'picked' ? 'yellow' : status === 'completed' ? 'green': 'red'}>
+        <Tag color={status === 'pending' ? 'yellow' : 'red'}>
           {status.toUpperCase()}
         </Tag>
       ),
@@ -45,7 +40,7 @@ const Dashboard = () => {
   return (
     <div style={{ padding: '20px' }}>
       <Table 
-        dataSource={orders}
+        dataSource={assignments}
         columns={columns}
         rowKey="_id"
         bordered
@@ -59,4 +54,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default History;

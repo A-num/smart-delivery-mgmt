@@ -3,7 +3,8 @@ import {
   createOrder,
   getOrders,
   getOrdersByPartnerId,
-  getIncompleteOrders
+  getActiveOrders,
+  getOrderById
 } from '../controllers/orderController'
 
 const router = express.Router();
@@ -11,6 +12,6 @@ const router = express.Router();
 router.get('/', getOrders);
 router.post('/', createOrder);
 router.get('/get-orders-by-partner-id/:id', getOrdersByPartnerId);
-router.get('/get-incomplete-orders', getIncompleteOrders);
-
+router.get('/get-active-orders/:id', getActiveOrders);
+router.get('/get-order-by-id/:id', getOrderById)
 export default router;

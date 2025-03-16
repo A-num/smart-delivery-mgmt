@@ -5,10 +5,8 @@ import { request } from "http";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    console.log("order body", req.body)
     const newOrder = new Order(req.body);
     await newOrder.save();
-    console.log("order saved")
     const result = await assignOrders();
 
     res.status(201).json({ order: newOrder, assignmentResult: result });
@@ -35,11 +33,35 @@ export const getOrdersByPartnerId = async (_req: Request, res: Response) => {
   }
 };
 
-export const getIncompleteOrders = async (_req: Request, res: Response) => {
+
+export const getActiveOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find({ status: { $ne: "completed" } });
-    res.status(200).json(orders);
+    const partnerId = req.params.partnerId;
+
+    const activeOrders = await Order.find({
+      assignedTo: partnerId,
+      status: { $in: ["pending", "assigned", "picked"] },
+    });
+
+    res.status(200).json(activeOrders);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch orders" });
+    console.error("Failed to fetch active orders:", error);
+    res.status(500).json({ message: "Failed to fetch active orders" });
   }
 };
+
+export const getOrderById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id).populate("assignedTo");
+
+    if (!order) {
+       res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch order" });
+  }
+};
+

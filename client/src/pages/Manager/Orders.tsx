@@ -9,7 +9,7 @@ const Orders = () => {
   const context = useContext(AppContext);
   const loadingContext = useContext(LoadingContext);
   if (!context) return null;
-  const { orders, fetchOrders } = context;
+  const {fetchOrders } = context;
 
   const [itemQuantity, setItemQuantity] = useState<Number>(0);
   const [itemPrice, setItemPrice] = useState<Number>(0);
@@ -42,8 +42,12 @@ const Orders = () => {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to create order");
-
+      if (!res.ok) {
+        throw new Error("Failed to create order"); 
+      }
+      else{
+        alert("Order Created Successfully")
+      }     
       fetchOrders();
     } catch (error) {
       console.error("Failed to create order:", error);
@@ -184,24 +188,6 @@ const Orders = () => {
           </Button>
         </Form.Item>
       </Form>
-
-      <button
-        className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
-        onClick={() => {
-          loadingContext?.showLoading();
-          fetchOrders();
-        }}
-      >
-        Refresh Orders
-      </button>
-
-      <ul>
-        {orders.map((order) => (
-          <li key={order._id} className="border-b py-2">
-            {order._id} - {order.status}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

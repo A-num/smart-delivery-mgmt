@@ -73,14 +73,15 @@ export const getPartnerDashboard = async (
       res.status(404).json({ message: "Partner not found" });
     }
 
-    const totalOrders = await Order.countDocuments({ partnerId });
+    const totalOrders = await Order.countDocuments({ assignedTo: partnerId });
     const completedOrders = await Order.countDocuments({
-      partnerId,
+      assignedTo: partnerId,
       status: "completed",
     });
 
-    const activeOrders = await Order.find({ partnerId, status: "active" });
-
+    const activeOrders = await Order.find({ assignedTo: partnerId, status: {$ne: "completed"}});
+    const recentAssignments = await Order.find({ assignedTo: partnerId});
+    
     res.status(200).json({
       metrics: {
         totalOrders,
@@ -88,7 +89,7 @@ export const getPartnerDashboard = async (
         rating: partner?.metrics?.rating ?? 0,
       },
       activeOrders,
-      recentAssignments: activeOrders.slice(0, 5),
+      recentAssignments: recentAssignments,
       availabilityStatus: partner?.status ?? "Not available",
       partner: partner
     });

@@ -15,6 +15,11 @@ const Partners = () => {
 
   const columns = [
     {
+      title: 'Partner Id',
+      dataIndex: '_id',
+      key: 'id',
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',

@@ -3,7 +3,7 @@ import Partner from '../models/partnerModel';
 import Order from '../models/orderModel';
 import Assignment from '../models/assignmentModel';
 
-export const getAssignmentMetrics = async(_req: Request, res: Response) => {
+export const getAssignment = async(_req: Request, res: Response) => {
     try {
       const assignments = await Assignment.find();
       res.status(200).json(assignments);

@@ -22,6 +22,7 @@ export type Manager = {
   name: string;
   email: string;
 };
+
 export type Order = {
   _id: string;
   orderNumber: string;

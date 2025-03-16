@@ -11,12 +11,15 @@ import {
   Button,
   Input,
   TimePicker,
+  Tag,
+  Table,
 } from "antd";
 import dayjs from "dayjs";
 import { EnvironmentOutlined } from "@ant-design/icons";
 import "./partner.css";
 import { AppContext } from "../../context/AppContext";
 import DraggableSelect from "../../components/DraggableSelect";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
 
@@ -28,11 +31,16 @@ interface Metric {
 
 interface Order {
   _id: string;
-  location: {
-    lat: number;
-    lng: number;
+  orderNumber: string;
+  status: "pending" | "assigned" | "picked" | "delivered";
+  customer: {
+    name: string;
+    phone: string;
+    address: string;
   };
-  status: string;
+  area: string;
+  totalAmount: number;
+  scheduledFor: string;
 }
 
 interface Assignment {
@@ -50,6 +58,7 @@ const PartnerDashboard = () => {
   const context = useContext(AppContext);
   const partner = context?.partner;
   const setPartner = context?.setPartner;
+  const navigate = useNavigate();
 
   const [shift, setShift] = useState<{
     start: String | null;
@@ -84,6 +93,7 @@ const PartnerDashboard = () => {
         localStorage.setItem("partner", data.partner);
       }
       setMetrics(data.metrics);
+      console.log(data.activeOrders)
       setActiveOrders(data.activeOrders);
       setRecentAssignments(data.recentAssignments);
       setAvailabilityStatus(data.availabilityStatus === "active");
@@ -161,6 +171,58 @@ const PartnerDashboard = () => {
     }
   };
 
+  const handleViewDetails = (orderId: string) => {
+    navigate(`/partnerDashboard/orders/${orderId}`);
+  };
+
+  const columns = [
+    {
+      title: 'Order Number',
+      dataIndex: '_id',
+      key: 'id',
+    },
+    {
+      title: 'Customer',
+      dataIndex: 'customer',
+      key: 'customer',
+      render: (customer: any) => (
+        <p>
+          {customer['name']} | {customer['address']} | {customer['phone']}
+        </p>
+      ),
+    },
+    {
+      title: 'Area',
+      dataIndex: 'area',
+      key: 'id',
+    },
+    {
+      title: 'Scheduled For',
+      dataIndex: 'scheduledFor',
+      key: 'scheduled_for',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => (
+        <Tag color={status === 'assigned' || status === 'picked' ? 'yellow' : status === 'completed' ? 'green': 'red'}>
+          {status.toUpperCase()}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      dataIndex: '_id',
+      render: (id: any) => (
+        <button onClick={() => handleViewDetails(id)}>
+        View Order
+      </button>
+      ),
+    },
+  ];
+
   const handleStatusChange = async (status: boolean) => {
     try {
       await fetch(
@@ -218,10 +280,25 @@ const PartnerDashboard = () => {
 
         <TabPane tab="Active Orders" key="2">
           <Card className="border rounded-lg shadow-md" title="Active Orders">
-            {
-              //TODO: active orders here
-            }
-            <p className="text-gray-500 italic">Your orders will appear here once assigned</p>
+            { activeOrders.length === 0  ? (
+          <p className="text-gray-500 italic">Your orders will appear here once assigned</p>
+             ) : (
+                 <div style={{ padding: '20px' }}>
+                 <Table 
+                   dataSource={activeOrders}
+                   columns={columns}
+                   rowKey="_id"
+                   bordered
+                   pagination={{
+                     pageSize: 4,
+                     showSizeChanger: false, 
+                     showLessItems: true,
+                   }}
+                 />
+               </div>
+             )
+          }
+            
           </Card>
         </TabPane>
 
@@ -266,22 +343,26 @@ const PartnerDashboard = () => {
         </TabPane>
 
         <TabPane tab="Recent Assignments" key="5">
-          <Card
-            className="border rounded-lg shadow-md"
-            title="Recent Assignments"
-          >
-            <List
-              dataSource={recentAssignments}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<EnvironmentOutlined />}
-                    title={`Order ${item.orderNumber}`}
-                    description={`Status: ${item.status}`}
-                  />
-                </List.Item>
-              )}
-            />
+          <Card className="border rounded-lg shadow-md" title="Recent Assignments">
+            { recentAssignments.length === 0  ? (
+          <p className="text-gray-500 italic">Your recent assignments will appear here once assigned</p>
+             ) : (
+                 <div style={{ padding: '20px' }}>
+                 <Table 
+                   dataSource={recentAssignments}
+                   columns={columns}
+                   rowKey="_id"
+                   bordered
+                   pagination={{
+                     pageSize: 4,
+                     showSizeChanger: false, 
+                     showLessItems: true,
+                   }}
+                 />
+               </div>
+             )
+          }
+            
           </Card>
         </TabPane>
 

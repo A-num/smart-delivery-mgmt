@@ -67,7 +67,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       loadingContext?.showLoading();
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
       if (!res.ok) throw new Error('Failed to fetch orders');
-      const data = await res.json();
+      const data: Order[] = await res.json();
       setOrders(data);
     } catch (error) {
       console.error('Failed to fetch orders:', error);
@@ -79,13 +79,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const fetchAssignments = async () => {
     try {
       loadingContext?.showLoading();
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/assignment-metrics`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/assignments`);
       if (!res.ok) throw new Error('Failed to fetch assignments');
       const data = await res.json();
-
-      if (data && data.assignments && data.metrics) {
-        setAssignments(data.assignments);
-        setAssignmentMetrics(data.metrics);
+      if (data) {
+        setAssignments(data);
       }
     } catch (error) {
       console.error('Failed to fetch assignments:', error);
