@@ -15,9 +15,9 @@ export const registerPartner = async (req: Request, res: Response): Promise<void
       res.status(400).json({ message: 'Partner already exists' });
       return;
     }
-
+    console.log("partner registeration data:", req.body)
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    console.log("password hashed")
     const newPartner = new Partner({
       name,
       email,
@@ -26,7 +26,9 @@ export const registerPartner = async (req: Request, res: Response): Promise<void
       areas,
     });
 
+    console.log("partner model created:", newPartner)
     await newPartner.save();
+    console.log("partner saved")
 
     res.status(201).json({ message: 'Partner registered successfully' });
   } catch (error) {
