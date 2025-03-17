@@ -7,7 +7,13 @@ import router from './routes';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+app.use(
+  cors({
+    origin: 'https://smart-delivery-mgmt.vercel.app',
+    credentials: true,
+  }));
+
 app.use(express.json());
 
 app.use('/api', router);
