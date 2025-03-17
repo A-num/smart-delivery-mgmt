@@ -44,7 +44,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [partners, setPartners] = useState<DeliveryPartner[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [assignmentMetrics, setAssignmentMetrics] = useState<AssignmentMetrics | null>(null);
+  const [assignmentMetrics] = useState<AssignmentMetrics | null>(null);
 
   const loadingContext = useContext(LoadingContext);
 

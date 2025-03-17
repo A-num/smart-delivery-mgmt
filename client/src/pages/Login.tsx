@@ -16,7 +16,6 @@ const Login = () => {
   const [role, setRole] = useState<string>("partner");
   const setPartner = useContext(AppContext)?.setPartner;
   const setManager = useContext(AppContext)?.setManager;
-  const partner = useContext(AppContext)?.partner;
   const { login } = authContext;
   const navigate = useNavigate();
 

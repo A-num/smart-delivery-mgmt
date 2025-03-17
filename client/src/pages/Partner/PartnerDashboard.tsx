@@ -4,7 +4,6 @@ import {
   Row,
   Col,
   Switch,
-  List,
   message,
   Tabs,
   Form,
@@ -15,11 +14,10 @@ import {
   Table,
 } from "antd";
 import dayjs from "dayjs";
-import { EnvironmentOutlined } from "@ant-design/icons";
 import "./partner.css";
 import { AppContext } from "../../context/AppContext";
 import DraggableSelect from "../../components/DraggableSelect";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
 

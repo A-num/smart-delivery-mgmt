@@ -5,7 +5,7 @@ const Assignments = () => {
   const context = useContext(AppContext);
   if (!context) return null;
 
-  const { assignments, assignmentMetrics, fetchAssignments } = context;
+  const { assignments, assignmentMetrics } = context;
 
   useEffect(() => {
     // fetchAssignments();
