@@ -30,7 +30,7 @@ const History = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={status === 'pending' ? 'yellow' : 'red'}>
+        <Tag color={status === 'Success' ? 'green' : 'red'}>
           {status.toUpperCase()}
         </Tag>
       ),
