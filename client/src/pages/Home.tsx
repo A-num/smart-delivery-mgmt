@@ -7,10 +7,10 @@ const HomePage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      if (localStorage.getItem("partner")) {
-        navigate("/partnerDashboard");
-      } else {
+      if (localStorage.getItem("manager")) {
         navigate("/managerDashboard");
+      } else {
+        navigate("/partnerDashboard");;
       }
     }
   }, []);
