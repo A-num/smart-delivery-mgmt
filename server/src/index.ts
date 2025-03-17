@@ -10,7 +10,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'https://smart-delivery-mgmt.vercel.app',
+    origin: "*",//'https://smart-delivery-mgmt.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }));
